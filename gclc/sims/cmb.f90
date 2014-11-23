@@ -94,7 +94,7 @@ module gclc_sims_cmb
         nside_dec = scinfo%nside_dec
 
         npix = nside_ra * nside_dec
-        lmax = scinfo%lmax
+        lmax = scinfo%lmaxDEG2RAD*dec
 
         allocate(scdata%ra(0:nside_ra-1))
         allocate(scdata%dec(0:nside_dec-1))
@@ -116,14 +116,20 @@ module gclc_sims_cmb
 
         scdata%alloc = .true.
 
+        return
     end subroutine
 
 
     subroutine sc_setup_coord()
         
         integer(I4B)        :: npix, ipix
+        integer(I4B)        :: ipix_ra, ipix_dec
+
         real(DP)            :: reso_ra, scale_ra, ra0
         real(DP)            :: reso_dec, scale_dec, dec0
+
+        real(DP)            :: ra, dec
+        real(DP)            :: theta, phi
     
         npix = scinfo%nside_ra * scinfo%nside_dec
 
@@ -143,9 +149,21 @@ module gclc_sims_cmb
         do ipix=0, nside_dec-1
             scinfo%dec(ipix) = scinfo%dec0 + 0.50_dp*reso_dec + ipix*reso_dec - 0.50_dp*scale_dec
         enddo
-
         
+        ipix = 0
+        do ipix_ra=0, nside_ra-1
+            ra = scinfo%ra(ipix_ra)
+            do ipix_dec=0, nside_dec-1
+                dec = scinfo%dec(ipix_dec)
 
+                call radec2thetaphi(ra, dec, theta, phi)
+
+                scdata%theta(ipix) = theta
+                scdata%phi(ipix)   = phi
+            enddo
+        enddo
+
+        return
     end subroutine
 
 
