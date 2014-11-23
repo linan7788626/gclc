@@ -105,7 +105,7 @@ module gclc_sims_cmb
         allocate(scdata%def_theta(0:npix-1))
         allocate(scdata%def_phi(0:npix-1))
 
-        if (scinfo%has_pol) then np = 3 else np = 1
+        if (scinfo%has_pol) np = 3 else np = 1
         allocate(scdata%input_cls(0:lmax,1:np))
 
         allocate(scdata%map_TQU(0:npix-1,1:np))
