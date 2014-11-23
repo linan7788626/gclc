@@ -17,7 +17,8 @@ module gclc_sims_cmb
 
         character(512)  :: input_cls_fits
         integer(I4B)    :: lmax
-
+        
+        logical         :: init = .false.
     end type
 
     type gclc_sc_data
@@ -72,6 +73,14 @@ module gclc_sims_cmb
         scinfo%input_cls_fits   = parse_string(ini_handle, 'input_Cls')
 
         return
+    end subroutine
+
+
+    subroutine gclc_sc_read()
+
+        implicit none
+
+        
     end subroutine
 
 end module
