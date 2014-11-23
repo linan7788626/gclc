@@ -13,10 +13,10 @@ OBJ  = cmb.o
 default: $(OBJ)
 
 %.o: %.f90
-    $(FC90) $(CFLAGS) -I$(HPXINC) -c -o $*.o $*.f90
+	$(FC90) $(CFLAGS) -I$(HPXINC) -c -o $*.o $*.f90
 
 %.o: %.F90
-    $(FC90) $(CFLAGS) -I$(HPXINC) -c -o $*.o $*.F90
+	$(FC90) $(CFLAGS) -I$(HPXINC) -c -o $*.o $*.F90
 
 %.o: %.f
 	$(FC90) $(CFLAGS) -I$(HPXINC) -c -o $*.o $*.f
