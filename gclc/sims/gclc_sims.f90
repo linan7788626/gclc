@@ -1,4 +1,4 @@
-module gclc_sims_cmb
+module gclc_sims
 
     use healpix_types
     use paramfile_io
@@ -30,7 +30,7 @@ module gclc_sims_cmb
         
         real(DP),       allocatable :: input_cls(:,:)
         real(DP),       allocatable :: map_TQU(:,:)
-        complex(DPC),   allocatable :: alms_TEB(:,:,:)
+        complex(DPC),   allocatable :: alms_TEB(:,:)
 
         real(DP),       allocatable :: map_kappa(:,:), map_def(:,:)
 
@@ -49,9 +49,6 @@ module gclc_sims_cmb
         character(*),       intent(in)  :: ini_file
         type(paramfile_handle)          :: ini_handle
 
-        logical         :: do_reso = .false.
-        logical         :: do_scale = .false.
-
         ini_handle = parse_init(ini_file)
 
         scinfo%has_pol      = parse_lgt(ini_handle, 'has_pol', .true.)
@@ -64,8 +61,6 @@ module gclc_sims_cmb
 
         scinfo%ra0          = parse_double(ini_handle, 'RA0')
         scinfo%dec0         = parse_double(ini_handle, 'DEC0')
-
-        if (scinfo%reso_arcmin .gt. 1.00d-6) do_reso = .true.
 
         scinfo%scale_ra     = parse_double(ini_handle, 'scale_RA', 0.00_dp)
         scinfo%scale_dec    = parse_double(ini_handle, 'scale_dec', 0.00_dp)
@@ -94,7 +89,7 @@ module gclc_sims_cmb
         nside_dec = scinfo%nside_dec
 
         npix = nside_ra * nside_dec
-        lmax = scinfo%lmaxDEG2RAD*dec
+        lmax = scinfo%lmax
 
         allocate(scdata%ra(0:nside_ra-1))
         allocate(scdata%dec(0:nside_dec-1))
@@ -105,7 +100,12 @@ module gclc_sims_cmb
         allocate(scdata%def_theta(0:npix-1))
         allocate(scdata%def_phi(0:npix-1))
 
-        if (scinfo%has_pol) np = 3 else np = 1
+        if (scinfo%has_pol) then
+            np = 3 
+        else
+            np = 1
+        endif
+
         allocate(scdata%input_cls(0:lmax,1:np))
 
         allocate(scdata%map_TQU(0:npix-1,1:np))
@@ -124,6 +124,7 @@ module gclc_sims_cmb
         
         integer(I4B)        :: npix, ipix
         integer(I4B)        :: ipix_ra, ipix_dec
+        integer(I4B)        :: nside_ra, nside_dec
 
         real(DP)            :: reso_ra, scale_ra, ra0
         real(DP)            :: reso_dec, scale_dec, dec0
@@ -143,18 +144,18 @@ module gclc_sims_cmb
         scale_dec = scinfo%scale_dec
 
         do ipix=0, nside_ra-1
-            scinfo%ra(ipix) = scinfo%ra0 + 0.50_dp*reso_ra + ipix*reso_ra - 0.50_dp*scale_ra
+            scdata%ra(ipix) = scinfo%ra0 + 0.50_dp*reso_ra + ipix*reso_ra - 0.50_dp*scale_ra
         enddo
 
         do ipix=0, nside_dec-1
-            scinfo%dec(ipix) = scinfo%dec0 + 0.50_dp*reso_dec + ipix*reso_dec - 0.50_dp*scale_dec
+            scdata%dec(ipix) = scinfo%dec0 + 0.50_dp*reso_dec + ipix*reso_dec - 0.50_dp*scale_dec
         enddo
         
         ipix = 0
         do ipix_ra=0, nside_ra-1
-            ra = scinfo%ra(ipix_ra)
+            ra = scdata%ra(ipix_ra)
             do ipix_dec=0, nside_dec-1
-                dec = scinfo%dec(ipix_dec)
+                dec = scdata%dec(ipix_dec)
 
                 call radec2thetaphi(ra, dec, theta, phi)
 
