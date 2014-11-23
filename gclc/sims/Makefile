@@ -10,7 +10,7 @@ INCLUDE = -I$(HPXINC) -I../utils
 
 FC90 = mpif90
 
-OBJ  = gclc_sims.o
+OBJ  = cmb.o gclc_sims.o
 
 default: $(OBJ)
 

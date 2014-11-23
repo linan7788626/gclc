@@ -30,7 +30,7 @@ module gclc_sims
         
         real(DP),       allocatable :: input_cls(:,:)
         real(DP),       allocatable :: map_TQU(:,:)
-        complex(DPC),   allocatable :: alms_TEB(:,:)
+        complex(DPC),   allocatable :: alms_TGC(:,:)
 
         real(DP),       allocatable :: map_kappa(:,:), map_def(:,:)
 
@@ -109,7 +109,7 @@ module gclc_sims
         allocate(scdata%input_cls(0:lmax,1:np))
 
         allocate(scdata%map_TQU(0:npix-1,1:np))
-        allocate(scdata%alms_TEB(1:np,lmax*(lmax+1)/2+lmax+1))
+        allocate(scdata%alms_TGC(1:np,lmax*(lmax+1)/2+lmax+1))
 
         allocate(scdata%map_kappa(0:npix-1,1:1))
         allocate(scdata%map_def(0:npix-1,1:1))
@@ -167,11 +167,5 @@ module gclc_sims
         return
     end subroutine
 
-
-    subroutine sc_read()
-
-        implicit none
-
-    end subroutine
 
 end module
