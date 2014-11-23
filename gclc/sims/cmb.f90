@@ -3,9 +3,11 @@ module gclc_sims_cmb
     use healpix_types
     use paramfile_io
 
+    use gclc_maths
+
     implicit none
 
-    type gclc_sc_params
+    type sc_params
 
         integer(I4B)    :: nside_ra, nside_dec
         real(DP)        :: scale_ra, scale_dec
@@ -20,7 +22,7 @@ module gclc_sims_cmb
         logical         :: init = .false.
     end type
 
-    type gclc_sc_data
+    type sc_data
 
         real(DP),       allocatable :: ra(:), dec(:)
         real(DP),       allocatable :: theta(:), phi(:)
@@ -35,12 +37,12 @@ module gclc_sims_cmb
         logical                     :: alloc = .false.
     end type
 
-    type(gclc_sc_params)            :: scinfo
-    type(gclc_sc_data),     target  :: scdata
+    type(sc_params)            :: scinfo
+    type(sc_data),     target  :: scdata
 
     contains
 
-    subroutine gclc_sc_init(ini_file)
+    subroutine sc_init(ini_file)
 
         implicit none
 
@@ -76,7 +78,7 @@ module gclc_sims_cmb
     end subroutine
 
 
-    subroutine gclc_sc_allocate()
+    subroutine sc_allocate()
 
         implicit none
         
@@ -117,11 +119,40 @@ module gclc_sims_cmb
     end subroutine
 
 
-    subroutine gclc_sc_read()
+    subroutine sc_setup_coord()
+        
+        integer(I4B)        :: npix, ipix
+        real(DP)            :: reso_ra, scale_ra, ra0
+        real(DP)            :: reso_dec, scale_dec, dec0
+    
+        npix = scinfo%nside_ra * scinfo%nside_dec
+
+        reso_ra = scinfo%scale_ra / scinfo%nside_ra
+        reso_dec = scinfo%scale_dec / scinfo%nside_dec
+
+        ra0 = scinfo%ra0
+        dec0 = scinfo%dec0
+
+        scale_ra = scinfo%scale_ra
+        scale_dec = scinfo%scale_dec
+
+        do ipix=0, nside_ra-1
+            scinfo%ra(ipix) = scinfo%ra0 + 0.50_dp*reso_ra + ipix*reso_ra - 0.50_dp*scale_ra
+        enddo
+
+        do ipix=0, nside_dec-1
+            scinfo%dec(ipix) = scinfo%dec0 + 0.50_dp*reso_dec + ipix*reso_dec - 0.50_dp*scale_dec
+        enddo
+
+        
+
+    end subroutine
+
+
+    subroutine sc_read()
 
         implicit none
 
-        
     end subroutine
 
 end module
